@@ -28,6 +28,9 @@ if config_env() == :prod do
       """
 
   config :phoenix160app, Phoenix160appWeb.Endpoint,
+    url: [
+      host: System.get_env("HOST") || "localhost",
+    ],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
