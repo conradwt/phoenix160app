@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+
+      target: dev
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      DATABASE_URL: ecto://postgres:password@localhost:5432/phoenix160app_prod
+      MIX_ENV: dev
+
+    # env_file:
+    #   - .env
+
+    ports:
+      - '4000:4000'
+
+    volumes:
+      - .:/app
+
+  db:
+    image: 'postgres:13.0-alpine'
+
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+
+    restart: always
+
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
